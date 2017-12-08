@@ -1,0 +1,165 @@
+---
+title: "Post_Event_Report"
+author: "Sam Gottuso"
+date: "December 7, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(knitr)
+library(rmarkdown)
+library(readr)
+
+
+##Load in functions necessary for creating DFs
+
+#Figures out the mode of dates to determine what the correct date is
+Mode_manual <- function(x) {
+  ux <- unique(x)
+  ux[which.max(tabulate(match(x, ux)))]
+}
+
+
+#standardization of which columns/names of columns
+column_names_adobe<-c("First_name","Last_name","Email","Status","Login","Logoff","Duration","Role","Role_other","Organization_name","ID","Region","Zip")
+  
+column_numbers_adobe<-c(3,4,5,7,8,9,10,12,13,16,18,21,23)
+
+column_names_webx<-column_names_adobe
+column_numbers_webx<-c(1,2,3,10,11,12,19,33,34,37,43,41,51)
+
+column_numbers_sm<-seq(10,18)
+column_names_sm<-c("Track","Reported_role","Reported_role_other","Valuable_use_time","Connect_others","Take_action","Enhanced_knowledge","Suggestions","Technical_difficulties")
+
+
+
+
+##Test data
+
+
+#PIA2
+
+PIA_2_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA2_analysis.xlsx',sheet = 2)
+
+
+PIA_2_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA_2_survey.xlsx',sheet = 1)
+
+
+
+#ecqm_HIT_Review
+
+eCQM_HIT_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/eCQM_HIT_analysis.xlsx',sheet = 1)
+
+ecqm_HIT_survey<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/eCQM_HIT_Survey.xlsx', sheet = 1)
+
+
+
+
+##Automatically Clean and Split out necessary data 
+
+event_meta_data<-data.frame(matrix(NA,ncol=25))
+colnames(event_meta_data)<-c("Date","Event_name","Attendance","Attendance_rate","Practice_attendees","Administration","Clinicians","Care_managers","Data_analyst","Project_managers","Project_director","Quality_improvement","CMS","Contractors","Payers","Vendors","Unique_practices","Total_practices","Survey_response_rate","Positive_VUT","Neutral_VUT","Negative_VUT","Positive_TA","Netural_TA","Negative_TA")
+
+Event_data_cleaner<-function(type,event_name,imported_data,imported_survey_data){
+  if(type=="adobe"){
+    cleaned_data<-imported_data[,column_numbers_adobe]
+    colnames(cleaned_data)<-column_names_adobe
+  }else if(type=="webx"){
+    cleaned_data<-imported_data[,column_numbers_webx]
+    colnames(cleaned_data)<-column_names_webx
+  }
+  
+  cleaned_data<-as.data.frame(cleaned_data)
+  
+  #Adding date
+  date<-Mode_manual(na.omit(cleaned_data$Login))
+
+  #Adding Attendance and attendance rate
+  attendance<-(sum(cleaned_data$Status=="Attended",na.rm = TRUE))
+  attendance_rate<-(attendance)/length(cleaned_data$Status)
+
+  #Adding practice participants-- from attended only
+  attended_df<-cleaned_data[(cleaned_data$Status=="Attended"),]
+  admin<-sum(attended_df$Role=="Administration",na.rm = TRUE)
+  drs<-sum(attended_df$Role=="Clinicians providing healthcare services within context of model",na.rm = TRUE)
+  cm<-sum(attended_df$Role=="Care Manager",na.rm = TRUE)
+  da<-sum(attended_df$Role=="Data Analysts",na.rm = TRUE)
+  pm<-sum(attended_df$Role=="Project Manager/Coordinator",na.rm = TRUE)
+  pd<-sum(attended_df$Role=="Project Director/Principal Investigator",na.rm = TRUE)
+  qi<-sum(attended_df$Role=="Quality Improvement Director",na.rm = TRUE)
+  PA<-sum(admin,drs,cm,da,pm,pd,qi)
+  
+  #Adding non-practice attendees
+  cms<-sum(attended_df$Role=="CMS",na.rm = TRUE)
+  cnt<-sum(attended_df$Role=="Contractor",na.rm = TRUE)
+  pay<-sum(attended_df$Role_other=="Payer",na.rm = TRUE)
+  ven<-sum(attended_df$Role_other=="Vendor",na.rm = TRUE)
+  
+  #Practices
+  up=length(unique(attended_df$ID))
+  tp=sum(attended_df$ID!="Not Available",na.rm = TRUE)
+  
+  
+  ##Survey Stuff
+  cleaned_data_survey<-imported_survey_data[,column_numbers_sm]
+  colnames(cleaned_data_survey)<-column_names_sm
+  
+  cleaned_data_survey<-tail(cleaned_data_survey,-1)
+  cleaned_data_survey<-cleaned_data_survey[rowSums(is.na(cleaned_data_survey))!=ncol(cleaned_data_survey),]
+  
+  cleaned_data_survey<-as.data.frame(cleaned_data_survey)
+  
+  srr<-(length(cleaned_data_survey$Track)/attendance)
+  
+  cleaned_data_survey$VUT<-parse_number(cleaned_data_survey$Valuable_use_time)
+  cleaned_data_survey$TA<-parse_number(cleaned_data_survey$Take_action)
+  
+  p_vut<-sum(cleaned_data_survey$VUT==5)+sum(cleaned_data_survey$VUT==4)
+  nu_vut<-sum(cleaned_data_survey$VUT==3)
+  n_vut<-sum(cleaned_data_survey$VUT==2)+sum(cleaned_data_survey$VUT==1)
+  
+  p_TA<-sum(cleaned_data_survey$TA==5)+sum(cleaned_data_survey$TA==4)
+  nu_TA<-sum(cleaned_data_survey$TA==3)
+  n_TA<-sum(cleaned_data_survey$TA==2)+sum(cleaned_data_survey$TA==1)
+  
+  
+  TD<-sum(cleaned_data_survey$Technical_difficulties=="Yes")
+  
+  
+
+append_list<-c(date,event_name,attendance,attendance_rate,PA,admin,drs,cm,da,pm,pd,qi,cms,cnt,pay,ven,up,tp,srr,p_vut,nu_vut,n_vut,p_TA,nu_TA,n_TA,TD)
+
+event_meta_data<-rbind(event_meta_data,append_list)
+
+return(event_meta_data)
+  
+}
+
+event_meta_data<-Event_data_cleaner("adobe","PIA2",PIA_2_first_import,PIA_2_survey_first_import)
+event_meta_data<-Event_data_cleaner("webx","eCQM HIT Review",eCQM_HIT_first_import,ecqm_HIT_survey)
+
+```
+
+##Intro
+
+```{r, echo= FALSE}
+
+
+
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+##Last Event
+
+
+##Monthly Comparison
+
+
+##Quarterly Comparison
+
+
