@@ -13,6 +13,7 @@ library(dplyr)
 library(knitr)
 library(rmarkdown)
 library(readr)
+library(reshape2)
 
 
 ##Load in functions necessary for creating DFs
@@ -35,7 +36,7 @@ column_numbers_webx<-c(1,2,3,10,11,12,19,33,34,37,43,41,51)
 column_numbers_sm<-seq(10,18)
 column_names_sm<-c("Track","Reported_role","Reported_role_other","Valuable_use_time","Connect_others","Take_action","Enhanced_knowledge","Suggestions","Technical_difficulties")
 
-
+#This is a change
 
 
 ##Test data
@@ -61,10 +62,10 @@ ecqm_HIT_survey<-read_excel(path='C:/Users/583185/Desktop/data_science/post_even
 
 ##Automatically Clean and Split out necessary data 
 
-event_meta_data<-data.frame(matrix(NA,ncol=25))
-colnames(event_meta_data)<-c("Date","Event_name","Attendance","Attendance_rate","Practice_attendees","Administration","Clinicians","Care_managers","Data_analyst","Project_managers","Project_director","Quality_improvement","CMS","Contractors","Payers","Vendors","Unique_practices","Total_practices","Survey_response_rate","Positive_VUT","Neutral_VUT","Negative_VUT","Positive_TA","Netural_TA","Negative_TA")
+event_meta_data<-data.frame(matrix(NA,ncol=26))
+colnames(event_meta_data)<-c("Date","Event_name","Event Type","Attendance","Attendance_rate","Practice_attendees","Administration","Clinicians","Care_managers","Data_analyst","Project_managers","Project_director","Quality_improvement","CMS","Contractors","Payers","Vendors","Unique_practices","Total_practices","Survey_response_rate","Positive_VUT","Neutral_VUT","Negative_VUT","Positive_TA","Netural_TA","Negative_TA")
 
-Event_data_cleaner<-function(type,event_name,imported_data,imported_survey_data){
+Event_data_cleaner<-function(type,event_name,event_type,imported_data,imported_survey_data){
   if(type=="adobe"){
     cleaned_data<-imported_data[,column_numbers_adobe]
     colnames(cleaned_data)<-column_names_adobe
@@ -131,7 +132,7 @@ Event_data_cleaner<-function(type,event_name,imported_data,imported_survey_data)
   
   
 
-append_list<-c(date,event_name,attendance,attendance_rate,PA,admin,drs,cm,da,pm,pd,qi,cms,cnt,pay,ven,up,tp,srr,p_vut,nu_vut,n_vut,p_TA,nu_TA,n_TA,TD)
+append_list<-c(date,event_name,event_type,attendance,attendance_rate,PA,admin,drs,cm,da,pm,pd,qi,cms,cnt,pay,ven,up,tp,srr,p_vut,nu_vut,n_vut,p_TA,nu_TA,n_TA,TD)
 
 event_meta_data<-rbind(event_meta_data,append_list)
 
@@ -139,22 +140,30 @@ return(event_meta_data)
   
 }
 
-event_meta_data<-Event_data_cleaner("adobe","PIA2",PIA_2_first_import,PIA_2_survey_first_import)
-event_meta_data<-Event_data_cleaner("webx","eCQM HIT Review",eCQM_HIT_first_import,ecqm_HIT_survey)
+event_meta_data<-Event_data_cleaner("adobe","PIA2","PIA",PIA_2_first_import,PIA_2_survey_first_import)
+event_meta_data<-Event_data_cleaner("webx","eCQM HIT Review","National Webinar",eCQM_HIT_first_import,ecqm_HIT_survey)
+
+last_event<-tail(event_meta_data,1)
+previous_event<-head(tail(event_meta_data,2),1)
 
 ```
 
-##Intro
+##Intro/Just Last Event
+
+This is a (mostly) automated post-event report that tells a story with our data, and compares to other recent and similar events so that everything we present to the client is viewed in context. It will also help us benchmark our performances in Program Year 2 as we look to build upon the success that we experienced during the first year of CPC+.
 
 ```{r, echo= FALSE}
-
-
+melted_last_event<-melt(last_event,id.vars = "Event_name")
+survey_colors<-c("green","yellow","red","green","yellow","red")
+survey_barplot<-ggplot(melted_last_event[20:25,],aes(variable,value))+geom_bar(stat = 'identity',aes(fill=melted_last_event[20:25,]$value))+scale_fill_manual(values = survey_colors)
+survey_barplot
 
 ```
 
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
-##Last Event
+##Previous Event Comparision
+
 
 
 ##Monthly Comparison
@@ -162,4 +171,4 @@ Note that the `echo = FALSE` parameter was added to the code chunk to prevent pr
 
 ##Quarterly Comparison
 
-##fixed something?
+##Similar Events comparison
