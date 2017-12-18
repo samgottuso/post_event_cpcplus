@@ -36,7 +36,6 @@ column_numbers_webx<-c(1,2,3,10,11,12,19,33,34,37,43,41,51)
 column_numbers_sm<-seq(10,18)
 column_names_sm<-c("Track","Reported_role","Reported_role_other","Valuable_use_time","Connect_others","Take_action","Enhanced_knowledge","Suggestions","Technical_difficulties")
 
-#This is a change
 
 
 ##Test data
@@ -57,10 +56,22 @@ eCQM_HIT_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/pos
 
 ecqm_HIT_survey<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/eCQM_HIT_Survey.xlsx', sheet = 1)
 
+#what you need to know about financial reporting
+
+need_to_know_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/need_to_know_analysis.xlsx',sheet = 1) 
+
+need_to_know_survey<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/need_to_know_survey.xlsx',sheet = 1)
 
 
+#PIA3
 
-##Automatically Clean and Split out necessary data 
+PIA_3_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA3_analysis.xlsx',sheet = 2)
+
+
+PIA_3_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA_3_survey.xlsx',sheet = 1)
+
+
+##Automatically clean and spit out necessary data 
 
 event_meta_data<-data.frame(matrix(NA,ncol=26))
 colnames(event_meta_data)<-c("Date","Event_name","Event Type","Attendance","Attendance_rate","Practice_attendees","Administration","Clinicians","Care_managers","Data_analyst","Project_managers","Project_director","Quality_improvement","CMS","Contractors","Payers","Vendors","Unique_practices","Total_practices","Survey_response_rate","Positive_VUT","Neutral_VUT","Negative_VUT","Positive_TA","Netural_TA","Negative_TA")
@@ -131,6 +142,8 @@ Event_data_cleaner<-function(type,event_name,event_type,imported_data,imported_s
   TD<-sum(cleaned_data_survey$Technical_difficulties=="Yes")
   
   
+  
+#append it onto the end of our event meta data frame which we will use to create all of graphs. 
 
 append_list<-c(date,event_name,event_type,attendance,attendance_rate,PA,admin,drs,cm,da,pm,pd,qi,cms,cnt,pay,ven,up,tp,srr,p_vut,nu_vut,n_vut,p_TA,nu_TA,n_TA,TD)
 
@@ -142,29 +155,65 @@ return(event_meta_data)
 
 event_meta_data<-Event_data_cleaner("adobe","PIA2","PIA",PIA_2_first_import,PIA_2_survey_first_import)
 event_meta_data<-Event_data_cleaner("webx","eCQM HIT Review","National Webinar",eCQM_HIT_first_import,ecqm_HIT_survey)
+event_meta_data<-Event_data_cleaner("webx","What you need to know Financial Reporting","National Webinar",need_to_know_first_import,need_to_know_survey)
+event_meta_data<-Event_data_cleaner("adobe","PIA 3: Risk Stratification","PIA",PIA_3_first_import,PIA_3_survey_first_import)
 
-last_event<-tail(event_meta_data,1)
-previous_event<-head(tail(event_meta_data,2),1)
+#Seperate these 3 events into seperate dataframes for ease of use.
+
+last_event<-as.data.frame(tail(event_meta_data,1))
+previous_event<-as.data.frame(head(tail(event_meta_data,2),1))
+
+
+comparison<-rbind(previous_event,last_event)
+
+#finding events with same type
+last_events_type<-event_meta_data[event_meta_data$`Event Type`==last_event$`Event Type`,]
+
+previous_event_same_type<-as.data.frame(head(tail(last_events_type,2),1))
+
+comparison_same_type<-rbind(last_event)
+
+##variables for our inline text
+
+survey_results<-'better'
+  
+survey_responses<-'more'
+
+attendance<-'higher'
+
+
 
 ```
 
-##Intro/Just Last Event
+##Intro
 
 This is a (mostly) automated post-event report that tells a story with our data, and compares to other recent and similar events so that everything we present to the client is viewed in context. It will also help us benchmark our performances in Program Year 2 as we look to build upon the success that we experienced during the first year of CPC+.
+
+## Last Event
+
+This section looks at `r last_event$Event_name` which took place on `r as.Date.POSIXct(as.numeric(last_event$Date))`. It had `r last_event$Attendance` attendees with `r last_event$Attendance_rate ` of registrants attending. 
+
+
+There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Negative_VUT),as.numeric(last_event$Neutral_VUT))` respondents to the survey. This first graph shows how they responded to the "Valuable Use of Time" (VUT) and  "I will take Action" (TA) questions on the survey.
 
 ```{r, echo= FALSE}
 melted_last_event<-melt(last_event,id.vars = "Event_name")
 survey_colors<-c("green","yellow","red","green","yellow","red")
-survey_barplot<-ggplot(melted_last_event[20:25,],aes(variable,value))+geom_bar(stat = 'identity',aes(fill=melted_last_event[20:25,]$value))+scale_fill_manual(values = survey_colors)
+survey_barplot<-ggplot(melted_last_event[20:25,],aes(variable,value,fill=variable))+geom_bar(stat = 'identity')+scale_fill_manual(values = survey_colors)
 survey_barplot
 
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
 
 ##Previous Event Comparision
 
+```{r,echo=FALSE}
 
+
+
+
+```
+This graph shows that this event had a `r attendance` attendance than the previous event. 
 
 ##Monthly Comparison
 
