@@ -130,13 +130,13 @@ Event_data_cleaner<-function(type,event_name,event_type,imported_data,imported_s
   cleaned_data_survey$VUT<-parse_number(cleaned_data_survey$Valuable_use_time)
   cleaned_data_survey$TA<-parse_number(cleaned_data_survey$Take_action)
   
-  p_vut<-sum(cleaned_data_survey$VUT==5)+sum(cleaned_data_survey$VUT==4)
+  p_vut<-sum(cleaned_data_survey$VUT==1)+sum(cleaned_data_survey$VUT==2)
   nu_vut<-sum(cleaned_data_survey$VUT==3)
-  n_vut<-sum(cleaned_data_survey$VUT==2)+sum(cleaned_data_survey$VUT==1)
+  n_vut<-sum(cleaned_data_survey$VUT==4)+sum(cleaned_data_survey$VUT==5)
   
-  p_TA<-sum(cleaned_data_survey$TA==5)+sum(cleaned_data_survey$TA==4)
+  p_TA<-sum(cleaned_data_survey$TA==1)+sum(cleaned_data_survey$TA==2)
   nu_TA<-sum(cleaned_data_survey$TA==3)
-  n_TA<-sum(cleaned_data_survey$TA==2)+sum(cleaned_data_survey$TA==1)
+  n_TA<-sum(cleaned_data_survey$TA==4)+sum(cleaned_data_survey$TA==5)
   
   
   TD<-sum(cleaned_data_survey$Technical_difficulties=="Yes")
@@ -175,14 +175,27 @@ comparison_same_type<-rbind(previous_event_same_type,last_event)
 
 comparison_same_type$percentage_practices<-(as.numeric(comparison_same_type$Practice_attendees)/as.numeric(comparison_same_type$Attendance))
 
+#averages and differences for same types of events
+average_attendance_type<-mean(as.numeric(last_events_type$Attendance), na.rm=TRUE)
+
+average_survey_response_rate_type<-mean(as.numeric(last_events_type$Survey_response_rate), na.rm=TRUE)
+
+average_practices_type<-mean(as.numeric(last_events_type$Total_practices), na.rm=TRUE)
+
+dif_attendance_type<-as.numeric(last_event$Attendance)-average_attendance_type
+
+dif_survey_response_rate<-as.numeric(last_event$Survey_response_rate)-average_survey_response_rate_type
+
+dif_practices<-as.numeric(last_event$Total_practices)-average_practices_type
+
+
 ##variables for our inline text
 
-survey_results<-'better'
-  
-survey_responses<-'more'
+attendance_word<-ifelse(dif_attendance_type>0,"higher",ifelse(dif_attendance_type<0,"lower","same"))
 
-attendance<-'higher'
+survey_response_rate_word<-ifelse(dif_survey_response_rate>0,"higher",ifelse(dif_survey_response_rate<0,"lower","same"))
 
+practices_word<-ifelse(dif_practices>0,"higher",ifelse(dif_practices<0,"lower","same"))
 
 
 ```
@@ -239,7 +252,8 @@ This shows the distribution of attending roles for each event.
 
 
 
-##Monthly Comparison
+##Same Type Comparison
+
+This event had a `r attendance_word` attendance than the average attendance for this type of event and a `r practices_word` number of practices attend compared to the average. For the survey, it had a `r survey_response_rate_word` rate of response compared to other similar type events.
 
 
-##Quarterly Comparison
