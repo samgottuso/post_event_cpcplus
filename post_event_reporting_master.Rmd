@@ -71,6 +71,27 @@ PIA_3_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_e
 PIA_3_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA_3_survey.xlsx',sheet = 1)
 
 
+#PIA4
+
+PIA_4_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_analysis.xlsx',sheet = 1)
+
+
+PIA_4_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_Survey.xlsx',sheet = 1)
+
+
+#PIA5
+
+PIA_5_first_import<--read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_analysis.xlsx',sheet = 1)
+
+PIA_5_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_Survey.xlsx',sheet = 1)
+
+#Taking the Next Step Webinar
+
+Taking_next_step_first_import<--read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/taking_next_step_analysis.xlsx',sheet = 1)
+
+Taking_next_step_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/Taking_next_step_Survey.xlsx',sheet = 1)
+
+
 ##Automatically clean and spit out necessary data 
 
 event_meta_data<-data.frame(matrix(NA,ncol=26))
@@ -233,11 +254,9 @@ melted_comparison<-melt(comparison_same_type,id.vars="Event_name")
 
 attendance_barplot<-ggplot(melted_comparison[5:6,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')
 
-role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))
 
 attendance_barplot
 
-role_barplot
 
 ```
 
@@ -245,6 +264,10 @@ role_barplot
 
 This shows the distribution of attending roles for each event. 
 ```{r, echo=FALSE}
+
+role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))
+
+role_barplot
 
 
 
@@ -256,4 +279,11 @@ This shows the distribution of attending roles for each event.
 
 This event had a `r attendance_word` attendance than the average attendance for this type of event and a `r practices_word` number of practices attend compared to the average. For the survey, it had a `r survey_response_rate_word` rate of response compared to other similar type events.
 
+These graphs compare the last event to all of the other events of the same type.
 
+```{r, echo=FALSE}
+
+
+
+
+```
