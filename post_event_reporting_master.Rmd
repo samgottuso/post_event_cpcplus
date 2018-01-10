@@ -28,7 +28,7 @@ Mode_manual <- function(x) {
 #standardization of which columns/names of columns
 column_names_adobe<-c("First_name","Last_name","Email","Status","Login","Logoff","Duration","Role","Role_other","Organization_name","ID","Region","Zip")
   
-column_numbers_adobe<-c(3,4,5,7,8,9,10,12,13,16,18,21,23)
+column_numbers_adobe<-c(3,4,5,7,8,9,10,12,13,16,18,22,24)
 
 column_names_webx<-column_names_adobe
 column_numbers_webx<-c(1,2,3,10,11,12,19,33,34,37,43,41,51)
@@ -73,7 +73,7 @@ PIA_3_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science
 
 #PIA4
 
-PIA_4_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_analysis.xlsx',sheet = 1)
+PIA_4_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_analysis.xlsx',sheet = 2)
 
 
 PIA_4_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_Survey.xlsx',sheet = 1)
@@ -81,16 +81,26 @@ PIA_4_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science
 
 #PIA5
 
-PIA_5_first_import<--read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_analysis.xlsx',sheet = 1)
+PIA_5_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_analysis.xlsx',sheet = 1)
 
 PIA_5_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_Survey.xlsx',sheet = 1)
 
 #Taking the Next Step Webinar
 
-Taking_next_step_first_import<--read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/taking_next_step_analysis.xlsx',sheet = 1)
+Taking_next_step_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/taking_next_step_analysis.xlsx',sheet = 1)
 
 Taking_next_step_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/Taking_next_step_Survey.xlsx',sheet = 1)
 
+#PIA6
+PIA_6_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA6_Data_Patients_analysis.xlsx',sheet = 1)
+
+PIA_6_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA6_Data_Patients_Survey.xlsx',sheet = 1)
+
+#PIA7
+
+PIA_7_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA7_Data_Specialty_analysis.xlsx',sheet = 1)
+
+PIA_7_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA7_Data_Specialty_Survey.xlsx',sheet = 1)
 
 ##Automatically clean and spit out necessary data 
 
@@ -120,7 +130,7 @@ Event_data_cleaner<-function(type,event_name,event_type,imported_data,imported_s
   admin<-sum(attended_df$Role=="Administration",na.rm = TRUE)
   drs<-sum(attended_df$Role=="Clinicians providing healthcare services within context of model",na.rm = TRUE)
   cm<-sum(attended_df$Role=="Care Manager",na.rm = TRUE)
-  da<-sum(attended_df$Role=="Data Analysts",na.rm = TRUE)
+  da<-sum(attended_df$Role=="Data Analyst",na.rm = TRUE)
   pm<-sum(attended_df$Role=="Project Manager/Coordinator",na.rm = TRUE)
   pd<-sum(attended_df$Role=="Project Director/Principal Investigator",na.rm = TRUE)
   qi<-sum(attended_df$Role=="Quality Improvement Director",na.rm = TRUE)
@@ -178,6 +188,11 @@ event_meta_data<-Event_data_cleaner("adobe","PIA2","PIA",PIA_2_first_import,PIA_
 event_meta_data<-Event_data_cleaner("webx","eCQM HIT Review","National Webinar",eCQM_HIT_first_import,ecqm_HIT_survey)
 event_meta_data<-Event_data_cleaner("webx","What you need to know Financial Reporting","National Webinar",need_to_know_first_import,need_to_know_survey)
 event_meta_data<-Event_data_cleaner("adobe","PIA 3: Risk Stratification","PIA",PIA_3_first_import,PIA_3_survey_first_import)
+event_meta_data<-Event_data_cleaner("adobe","PIA 4: BHI Care Management Model","PIA",PIA_4_first_import,PIA_4_survey_first_import)
+event_meta_data<-Event_data_cleaner("adobe","PIA 5: BHI Behaviorist Model","PIA",PIA_5_first_import,PIA_5_survey_first_import)
+event_meta_data<-Event_data_cleaner("webx","Taking the Next Step: Year 2 Care Delivery Requirements","National Webinar",Taking_next_step_first_import,Taking_next_step_survey_first_import)
+event_meta_data<-Event_data_cleaner("adobe","PIA 6: Using Data to Steer Care for High Risk Patients","PIA",PIA_6_first_import,PIA_6_survey_first_import)
+event_meta_data<-Event_data_cleaner("adobe","PIA 7: Using Data to Steer High Volume High Cost Specialty Care","PIA",PIA_7_first_import,PIA_7_survey_first_import)
 
 #Seperate these 3 events into seperate dataframes for ease of use.
 
@@ -189,6 +204,13 @@ comparison<-rbind(previous_event,last_event)
 
 #finding events with same type
 last_events_type<-event_meta_data[event_meta_data$`Event Type`==last_event$`Event Type`,]
+
+
+melted_last_events_type<-melt(last_events_type,id.vars = 'Event_name')
+melted_last_events_type<-melted_last_events_type[complete.cases(melted_last_events_type),]
+event_names<-(as.list.data.frame(melted_last_events_type[1:(length(melted_last_events_type$Event_name)/25),1]))
+sorted_event_names<-factor(event_names)
+melted_last_events_type$Event_name<-factor(melted_last_events_type$Event_name,levels = sorted_event_names)
 
 previous_event_same_type<-as.data.frame(head(tail(last_events_type,2),1))
 
@@ -219,6 +241,11 @@ survey_response_rate_word<-ifelse(dif_survey_response_rate>0,"higher",ifelse(dif
 practices_word<-ifelse(dif_practices>0,"higher",ifelse(dif_practices<0,"lower","same"))
 
 
+
+
+
+
+
 ```
 
 ##Intro
@@ -235,45 +262,22 @@ There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Nega
 ```{r, echo= FALSE}
 melted_last_event<-melt(last_event,id.vars = "Event_name")
 survey_colors<-c("green","yellow","red","green","yellow","red")
-survey_barplot<-ggplot(melted_last_event[20:25,],aes(variable,value,fill=variable))+geom_bar(stat = 'identity')+scale_fill_manual(values = survey_colors)
+graphing_melted<-melted_last_event[20:25,]
+graphing_melted$value_numeric<-as.numeric(graphing_melted$value)
+survey_barplot<-ggplot(graphing_melted,aes(variable,value_numeric,fill=variable))+geom_bar(stat = 'identity')+scale_fill_manual(values = survey_colors)
 survey_barplot
 
 ```
 
 
-##Previous Event Comparision
-
-This section reviews the differences between `r last_event$Event_name` and the previous `r last_event$'Event Type' `, which was titled `r comparison_same_type$Event_name[1] ` and took place on `r as.Date.POSIXct(as.numeric(comparison_same_type$Date[1])) `.
-
-```{r,echo=FALSE}
-
-
-melted_comparison<-melt(comparison_same_type,id.vars="Event_name")
-
-
-
-attendance_barplot<-ggplot(melted_comparison[5:6,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')
-
-
-attendance_barplot
-
+This table gives a breakdown of Attendees by role.
+```{r,echo= FALSE,results= 'asis'}
+table_melted<-melted_last_event[6:16,2:3]
+table_melted$value<-as.numeric(table_melted$value)
+colnames(table_melted)<-c("Role","Number of Attendees")
+kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 
 ```
-
-
-
-This shows the distribution of attending roles for each event. 
-```{r, echo=FALSE}
-
-role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))
-
-role_barplot
-
-
-
-```
-
-
 
 ##Same Type Comparison
 
@@ -283,7 +287,42 @@ These graphs compare the last event to all of the other events of the same type.
 
 ```{r, echo=FALSE}
 
+attendance_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),vjust= 2,hjust =-.1,label="Average Attendance")
+
+
+attendance_rate_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),vjust= 2,hjust =-.1,label="Average Attendance Rate")
+
+##Room for another graph or two-- get team feedback
+
+source('multiplot.R')
+multiplot(attendance_barplot,attendance_rate_barplot)
+
+
+```
+
+
+
+##Previous Event Comparision
+
+This section gives a more in-depth breakdown between `r last_event$Event_name` and the previous `r last_event$'Event Type' `, which was titled `r comparison_same_type$Event_name[1] ` and took place on `r as.Date.POSIXct(as.numeric(comparison_same_type$Date[1])) `.
+
+
+This shows the distribution of attending roles for each event. 
+```{r, echo=FALSE}
+
+melted_comparison<-melt(comparison_same_type,id.vars="Event_name")
+
+
+role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))
+
+
+
+role_barplot
 
 
 
 ```
+
+
+
+
