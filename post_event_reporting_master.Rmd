@@ -14,6 +14,9 @@ library(knitr)
 library(rmarkdown)
 library(readr)
 library(reshape2)
+library(leaflet)
+library(zipcode)
+library(rgdal)
 
 
 ##Load in functions necessary for creating DFs
@@ -28,7 +31,7 @@ Mode_manual <- function(x) {
 #standardization of which columns/names of columns
 column_names_adobe<-c("First_name","Last_name","Email","Status","Login","Logoff","Duration","Role","Role_other","Organization_name","ID","Region","Zip")
   
-column_numbers_adobe<-c(3,4,5,7,8,9,10,12,13,16,18,22,24)
+column_numbers_adobe<-c(3,4,5,7,8,9,10,12,13,16,20,22,24)
 
 column_names_webx<-column_names_adobe
 column_numbers_webx<-c(1,2,3,10,11,12,19,33,34,37,43,41,51)
@@ -184,6 +187,9 @@ return(event_meta_data)
   
 }
 
+
+#Each event has to be appended unto event_meta_data using Event_Data_Cleaner
+
 event_meta_data<-Event_data_cleaner("adobe","PIA2","PIA",PIA_2_first_import,PIA_2_survey_first_import)
 event_meta_data<-Event_data_cleaner("webx","eCQM HIT Review","National Webinar",eCQM_HIT_first_import,ecqm_HIT_survey)
 event_meta_data<-Event_data_cleaner("webx","What you need to know Financial Reporting","National Webinar",need_to_know_first_import,need_to_know_survey)
@@ -242,6 +248,38 @@ practices_word<-ifelse(dif_practices>0,"higher",ifelse(dif_practices<0,"lower","
 
 
 
+##Last Event Mapper
+
+adobe_map_columns<-c(7,18,20,22,24)
+adobe_map_names<-c("Attended","Type","ID","Region","zip")
+
+webx_map_columns<-c(10,39,43,41,51)
+webx_map_names<-adobe_map_names
+
+map_cleaner<-function(type,imported_data){
+  if(type=="adobe"){
+    cleaned_data<-imported_data[,adobe_map_columns]
+    colnames(cleaned_data)<-adobe_map_names
+    cleaned_data<-cleaned_data[cleaned_data$Type=="Practice",]
+  }else if(type=="webx"){
+    cleaned_data<-imported_data[,webx_map_columns]
+    colnames(cleaned_data)<-webx_map_names
+    cleaned_data<-cleaned_data[cleaned_data$Type=="Primary Care Practice",]
+  }
+  
+  cleaned_data<-as.data.frame(cleaned_data)
+  cleaned_data<-cleaned_data[cleaned_data$Attended=="Attended",]
+  cleaned_data$Zip<-clean.zipcodes(cleaned_data$zip)
+  data("zipcode")
+  cleaned_data<-left_join(cleaned_data,zipcode,by="zip")
+  #Add lat and long too?
+    
+  
+  
+  return(cleaned_data)
+}
+state_shapes<-invisible(readOGR("cb_2016_us_state_500k.shp",layer = "cb_2016_us_state_500k", GDAL1_integer64_policy = TRUE))
+
 
 
 
@@ -269,12 +307,32 @@ survey_barplot
 
 ```
 
+This map shows us a representation of where practices were attending from.
+
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+event_map_data<-map_cleaner("adobe",PIA_7_first_import)
+state_count<-table(event_map_data$state)
+state_shapes$COUNT<-state_count[as.character(state_shapes$STUSPS)]
+state_shapes$COUNT<-ifelse(is.na(state_shapes$COUNT),0,state_shapes$COUNT)
+bins<-c(0,.5,.75,1,3,5,7,9,11,13,15,20,25,30,50,Inf)
+pal_fil <- invisible(colorBin("YlOrRd", domain = state_shapes$COUNT,bins = bins))
+leaflet(state_shapes)%>%
+  setView(-90,37.8,4)%>%
+  addPolygons(color="#4444444",fillColor = ~pal_fil(COUNT),weight = 2, opacity =1, fillOpacity = .8,highlight=
+                highlightOptions(weight = 5, bringToFront = TRUE),label=paste(state_shapes$STUSPS,state_count[as.character(state_shapes$STUSPS)]))
+
+
+
+
+
+```
 
 This table gives a breakdown of Attendees by role.
 ```{r,echo= FALSE,results= 'asis'}
 table_melted<-melted_last_event[6:16,2:3]
 table_melted$value<-as.numeric(table_melted$value)
 colnames(table_melted)<-c("Role","Number of Attendees")
+#table_melted$variable<-sub("_"," ", table_melted$variable)
 kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 
 ```
