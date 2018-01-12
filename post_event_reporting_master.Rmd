@@ -19,6 +19,21 @@ library(zipcode)
 library(rgdal)
 
 
+
+
+##Current steps for working the report generator
+
+# 1) Import both your cleaned data file, and survey data (All Individual Responses-- XLS+ format)-- ensure that all of the columns are the in the standard format (names/coulmn numbers should match up with column_numbers_adobe or column_numbers_webx)
+
+# 2) Run them through the event cleaner function (at the end of all of the event_meta_data lines) do event_meta_data<-Event_data_cleaner("file format","Name of the event", "Event type", data file, survey data)
+
+#3) change the event_map_data function to run with the most recent version
+
+#4) if desired change the output in the header to be pdf_document
+
+#5) Save as new file and run (knit)
+
+
 ##Load in functions necessary for creating DFs
 
 #Figures out the mode of dates to determine what the correct date is
@@ -46,64 +61,81 @@ column_names_sm<-c("Track","Reported_role","Reported_role_other","Valuable_use_t
 
 #PIA2
 
-PIA_2_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA2_analysis.xlsx',sheet = 2)
+PIA_2_first_import<-read_excel(path='PIA2_analysis.xlsx',sheet = 2)
 
 
-PIA_2_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA_2_survey.xlsx',sheet = 1)
+PIA_2_survey_first_import<-read_excel(path='PIA_2_survey.xlsx',sheet = 1)
 
 
 
 #ecqm_HIT_Review
 
-eCQM_HIT_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/eCQM_HIT_analysis.xlsx',sheet = 1)
+eCQM_HIT_first_import<-read_excel(path='eCQM_HIT_analysis.xlsx',sheet = 1)
 
-ecqm_HIT_survey<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/eCQM_HIT_Survey.xlsx', sheet = 1)
+ecqm_HIT_survey<-read_excel(path='eCQM_HIT_Survey.xlsx', sheet = 1)
 
 #what you need to know about financial reporting
 
-need_to_know_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/need_to_know_analysis.xlsx',sheet = 1) 
+need_to_know_first_import<-read_excel(path='need_to_know_analysis.xlsx',sheet = 1) 
 
-need_to_know_survey<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/need_to_know_survey.xlsx',sheet = 1)
+need_to_know_survey<-read_excel(path='need_to_know_survey.xlsx',sheet = 1)
 
 
 #PIA3
 
-PIA_3_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA3_analysis.xlsx',sheet = 2)
+PIA_3_first_import<-read_excel(path='PIA3_analysis.xlsx',sheet = 2)
 
 
-PIA_3_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA_3_survey.xlsx',sheet = 1)
+PIA_3_survey_first_import<-read_excel(path='PIA_3_survey.xlsx',sheet = 1)
 
 
 #PIA4
 
-PIA_4_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_analysis.xlsx',sheet = 2)
+PIA_4_first_import<-read_excel(path='PIA4_BHI_CM_analysis.xlsx',sheet = 2)
 
 
-PIA_4_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA4_BHI_CM_Survey.xlsx',sheet = 1)
+PIA_4_survey_first_import<-read_excel(path='PIA4_BHI_CM_Survey.xlsx',sheet = 1)
 
 
 #PIA5
 
-PIA_5_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_analysis.xlsx',sheet = 1)
+PIA_5_first_import<-read_excel(path='PIA5_BHI_Behaviorist_analysis.xlsx',sheet = 1)
 
-PIA_5_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA5_BHI_Behaviorist_Survey.xlsx',sheet = 1)
+PIA_5_survey_first_import<-read_excel(path='PIA5_BHI_Behaviorist_Survey.xlsx',sheet = 1)
 
 #Taking the Next Step Webinar
 
-Taking_next_step_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/taking_next_step_analysis.xlsx',sheet = 1)
+Taking_next_step_first_import<-read_excel(path='taking_next_step_analysis.xlsx',sheet = 1)
 
-Taking_next_step_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/Taking_next_step_Survey.xlsx',sheet = 1)
+Taking_next_step_survey_first_import<-read_excel(path='Taking_next_step_Survey.xlsx',sheet = 1)
 
 #PIA6
-PIA_6_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA6_Data_Patients_analysis.xlsx',sheet = 1)
+PIA_6_first_import<-read_excel(path='PIA6_Data_Patients_analysis.xlsx',sheet = 1)
 
-PIA_6_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA6_Data_Patients_Survey.xlsx',sheet = 1)
+PIA_6_survey_first_import<-read_excel(path='PIA6_Data_Patients_Survey.xlsx',sheet = 1)
 
 #PIA7
 
-PIA_7_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA7_Data_Specialty_analysis.xlsx',sheet = 1)
+PIA_7_first_import<-read_excel(path='PIA7_Data_Specialty_analysis.xlsx',sheet = 1)
 
-PIA_7_survey_first_import<-read_excel(path='C:/Users/583185/Desktop/data_science/post_event_reporting/PIA7_Data_Specialty_Survey.xlsx',sheet = 1)
+PIA_7_survey_first_import<-read_excel(path='PIA7_Data_Specialty_Survey.xlsx',sheet = 1)
+
+#PIA8
+
+PIA_8_first_import<-read_excel(path='PIA8_Share_Care_analysis.xlsx',sheet = 1)
+
+PIA_8_survey_first_import<-read_excel(path='PIA8_Share_Care_Survey.xlsx',sheet = 1)
+
+#Submitting eCQM
+
+submitting_eCQM_first_import<-read_excel(path = 'Submitting_eCQM_analysis.xlsx',sheet = 1)
+
+submitting_eCQM_survey_first_import<-read_excel(path = 'Submitting_eCQM_Survey.xlsx', sheet = 1)
+
+#PIA9
+
+PIA_9_first_import<-read_excel(path = 'PIA9_Timely_Exchange_analysis.xlsx',sheet = 1)
+PIA_9_survey_first_import<-read_excel(path = 'PIA9_Timely_Exchange_survey.xlsx',sheet = 1)
 
 ##Automatically clean and spit out necessary data 
 
@@ -199,6 +231,9 @@ event_meta_data<-Event_data_cleaner("adobe","PIA 5: BHI Behaviorist Model","PIA"
 event_meta_data<-Event_data_cleaner("webx","Taking the Next Step: Year 2 Care Delivery Requirements","National Webinar",Taking_next_step_first_import,Taking_next_step_survey_first_import)
 event_meta_data<-Event_data_cleaner("adobe","PIA 6: Using Data to Steer Care for High Risk Patients","PIA",PIA_6_first_import,PIA_6_survey_first_import)
 event_meta_data<-Event_data_cleaner("adobe","PIA 7: Using Data to Steer High Volume High Cost Specialty Care","PIA",PIA_7_first_import,PIA_7_survey_first_import)
+event_meta_data<-Event_data_cleaner("adobe","PIA 8: Agreeing how to Share the Care with Specialists","PIA",PIA_8_first_import,PIA_8_survey_first_import)
+event_meta_data<-Event_data_cleaner("webx","Submitting your 2017 eCQM Data to CMS","National Webinar",submitting_eCQM_first_import,submitting_eCQM_survey_first_import)
+event_meta_data<-Event_data_cleaner("adobe","PIA 9: Timely Exchange of Hospital and ED Data","PIA",PIA_9_first_import,PIA_9_survey_first_import)
 
 #Seperate these 3 events into seperate dataframes for ease of use.
 
@@ -264,16 +299,15 @@ map_cleaner<-function(type,imported_data){
   }else if(type=="webx"){
     cleaned_data<-imported_data[,webx_map_columns]
     colnames(cleaned_data)<-webx_map_names
-    cleaned_data<-cleaned_data[cleaned_data$Type=="Primary Care Practice",]
+    cleaned_data<-cleaned_data[cleaned_data$Type=="Primary care clinic",]
   }
   
   cleaned_data<-as.data.frame(cleaned_data)
   cleaned_data<-cleaned_data[cleaned_data$Attended=="Attended",]
-  cleaned_data$Zip<-clean.zipcodes(cleaned_data$zip)
+  cleaned_data$zip<-clean.zipcodes(cleaned_data$zip)
   data("zipcode")
   cleaned_data<-left_join(cleaned_data,zipcode,by="zip")
-  #Add lat and long too?
-    
+  #So by doing a left join we have zip/state/city/lat/long
   
   
   return(cleaned_data)
@@ -310,14 +344,14 @@ survey_barplot
 This map shows us a representation of where practices were attending from.
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-event_map_data<-map_cleaner("adobe",PIA_7_first_import)
+event_map_data<-map_cleaner("adobe",PIA_9_first_import)
 state_count<-table(event_map_data$state)
 state_shapes$COUNT<-state_count[as.character(state_shapes$STUSPS)]
 state_shapes$COUNT<-ifelse(is.na(state_shapes$COUNT),0,state_shapes$COUNT)
 bins<-c(0,.5,.75,1,3,5,7,9,11,13,15,20,25,30,50,Inf)
 pal_fil <- invisible(colorBin("YlOrRd", domain = state_shapes$COUNT,bins = bins))
 leaflet(state_shapes)%>%
-  setView(-90,37.8,4)%>%
+  setView(-80,37.8,3.25)%>%
   addPolygons(color="#4444444",fillColor = ~pal_fil(COUNT),weight = 2, opacity =1, fillOpacity = .8,highlight=
                 highlightOptions(weight = 5, bringToFront = TRUE),label=paste(state_shapes$STUSPS,state_count[as.character(state_shapes$STUSPS)]))
 
@@ -345,10 +379,14 @@ These graphs compare the last event to all of the other events of the same type.
 
 ```{r, echo=FALSE}
 
-attendance_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),vjust= 2,hjust =-.1,label="Average Attendance")
+attendance_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),vjust= 2,hjust =-.1,label="Average Attendance")+xlab('Event')+ylab('Number of Attendees')
+
+attendance_barplot<-attendance_barplot+theme(axis.text.x = element_blank())
 
 
-attendance_rate_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),vjust= 2,hjust =-.1,label="Average Attendance Rate")
+attendance_rate_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),vjust= 2,hjust =-.1,label="Average Attendance Rate")+xlab('Event')+ylab('Attendance Rate')
+
+attendance_rate_barplot<-attendance_rate_barplot+theme(axis.text.x = element_blank())
 
 ##Room for another graph or two-- get team feedback
 
@@ -365,17 +403,26 @@ multiplot(attendance_barplot,attendance_rate_barplot)
 This section gives a more in-depth breakdown between `r last_event$Event_name` and the previous `r last_event$'Event Type' `, which was titled `r comparison_same_type$Event_name[1] ` and took place on `r as.Date.POSIXct(as.numeric(comparison_same_type$Date[1])) `.
 
 
-This shows the distribution of attending roles for each event. 
+This first plow shows the distribution of attending roles for each event, while the second shows the comparison between positive responses to the survey question "Attending this session was a valuable use of my time".
 ```{r, echo=FALSE}
+comparison_same_type$Survey_respondents<-(as.numeric(comparison_same_type$Positive_VUT)+as.numeric(comparison_same_type$Neutral_VUT)+as.numeric(comparison_same_type$Negative_VUT))
+comparison_same_type$Positive_percentage<-round(as.numeric(comparison_same_type$Positive_VUT)/(comparison_same_type$Survey_respondents),2)
+comparison_same_type$Neutral_percentage<-round(as.numeric(comparison_same_type$Neutral_VUT)/(comparison_same_type$Survey_respondents),2)
+comparison_same_type$Negative_percentage<-round(as.numeric(comparison_same_type$Negative_VUT)/(comparison_same_type$Survey_respondents),2)
 
 melted_comparison<-melt(comparison_same_type,id.vars="Event_name")
 
 
-role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))
+role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))+xlab('Attendee Role')+ylab('Number attending')
 
 
+survey_percents<-ggplot(melted_comparison[55:60,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity')+coord_polar(theta='x')
+survey_percents_event1
 
-role_barplot
+source('multiplot.R')
+multiplot(role_barplot,survey_percents)
+
+
 
 
 
