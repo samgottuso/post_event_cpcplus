@@ -415,16 +415,20 @@ melted_comparison<-melt(comparison_same_type,id.vars="Event_name")
 
 role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))+xlab('Attendee Role')+ylab('Number attending')
 
+#role_barplot
 
-survey_percents<-ggplot(melted_comparison[55:60,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity')+coord_polar(theta='x')
-survey_percents_event1
+survey_percents_1<-ggplot(melted_comparison[seq(55,59,2),],aes(x='',y=as.numeric(value),fill=variable,label=as.numeric(value)))+geom_bar(width=1,stat = 'identity')+geom_text()
+survey_percents_1<-survey_percents_1+coord_polar('y', start = 0)+ggtitle(paste('Survey Responses for ',melted_comparison[55,]$Event_name))+theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.title.y=element_blank())
+
+
+survey_percents_2<-ggplot(melted_comparison[seq(56,60,2),],aes(x='',y=as.numeric(value),fill=variable,label=as.numeric(value)))+geom_bar(width=1,stat = 'identity')+geom_text()
+survey_percents_2<-survey_percents_2+coord_polar('y', start = 0)+ggtitle(paste('Survey Responses for ',melted_comparison[56,]$Event_name))+theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.title.y=element_blank())
+
+
 
 source('multiplot.R')
-multiplot(role_barplot,survey_percents)
-
-
-
-
+role_barplot
+multiplot(survey_percents_1,survey_percents_2)
 
 ```
 
