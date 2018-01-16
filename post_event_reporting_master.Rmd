@@ -17,6 +17,8 @@ library(reshape2)
 library(leaflet)
 library(zipcode)
 library(rgdal)
+library(grid)
+library(gridExtra)
 
 
 
@@ -137,6 +139,13 @@ submitting_eCQM_survey_first_import<-read_excel(path = 'Submitting_eCQM_Survey.x
 PIA_9_first_import<-read_excel(path = 'PIA9_Timely_Exchange_analysis.xlsx',sheet = 1)
 PIA_9_survey_first_import<-read_excel(path = 'PIA9_Timely_Exchange_survey.xlsx',sheet = 1)
 
+#Financial_Reporting
+
+FR_OH_first_import<-read_excel(path='FR_OH_analysis.xlsx',sheet = 1)
+FR_OH_survey_first_import<-read_excel(path = 'FR_OH_Survey.xlsx',sheet = 1)
+
+
+
 ##Automatically clean and spit out necessary data 
 
 event_meta_data<-data.frame(matrix(NA,ncol=26))
@@ -234,6 +243,7 @@ event_meta_data<-Event_data_cleaner("adobe","PIA 7: Using Data to Steer High Vol
 event_meta_data<-Event_data_cleaner("adobe","PIA 8: Agreeing how to Share the Care with Specialists","PIA",PIA_8_first_import,PIA_8_survey_first_import)
 event_meta_data<-Event_data_cleaner("webx","Submitting your 2017 eCQM Data to CMS","National Webinar",submitting_eCQM_first_import,submitting_eCQM_survey_first_import)
 event_meta_data<-Event_data_cleaner("adobe","PIA 9: Timely Exchange of Hospital and ED Data","PIA",PIA_9_first_import,PIA_9_survey_first_import)
+# event_meta_data<-Event_data_cleaner('webx',"Financial Reporting Office Hour","National Webinar",FR_OH_first_import,FR_OH_survey_first_import)
 
 #Seperate these 3 events into seperate dataframes for ease of use.
 
@@ -330,6 +340,23 @@ This section looks at `r last_event$Event_name` which took place on `r as.Date.P
 
 
 There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Negative_VUT),as.numeric(last_event$Neutral_VUT))` respondents to the survey. This first graph shows how they responded to the "Valuable Use of Time" (VUT) and  "I will take Action" (TA) questions on the survey.
+
+###Attendance and Survey Response Rates
+
+```{r,echo = FALSE}
+#gauge(round(as.numeric(last_event$Survey_response_rate)*100,digits=1),min = 0,max = 100,label = 'Survey Response Rate',symbol = '%')
+
+source('gg_gauge.R')
+attendance_gauge<-gg.gauge(round(as.numeric(last_event$Attendance_rate)*100,digits=1),'% Attendance',breaks = c(0,20,50,100))
+
+survey_gauge<-gg.gauge(round(as.numeric(last_event$Survey_response_rate)*100,digits = 1),'% Survey Response',breaks = c(0,20,50,100))
+
+grid.newpage()
+
+grid.draw(arrangeGrob(attendance_gauge,survey_gauge))
+
+
+```
 
 ```{r, echo= FALSE}
 melted_last_event<-melt(last_event,id.vars = "Event_name")
