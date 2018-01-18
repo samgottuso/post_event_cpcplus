@@ -12,12 +12,12 @@ gg.gauge <- function(pos,custom_label,breaks=c(0,30,70,100)) {
   }
   ggplot()+ 
     geom_polygon(data=get.poly(breaks[1],breaks[2]),aes(x,y),fill="red")+
-    geom_polygon(data=get.poly(breaks[2],breaks[3]),aes(x,y),fill="gold")+
-    geom_polygon(data=get.poly(breaks[3],breaks[4]),aes(x,y),fill="forestgreen")+
+    geom_polygon(data=get.poly(breaks[2],breaks[3]),aes(x,y),fill="yellow")+
+    geom_polygon(data=get.poly(breaks[3],breaks[4]),aes(x,y),fill="green")+
     geom_polygon(data=get.poly(pos-1,pos+1,0.2),aes(x,y))+
-    geom_text(data=as.data.frame(breaks), size=5, fontface="bold", vjust=0,
+    geom_text(data=as.data.frame(breaks), size=3, fontface="bold", vjust=0,
               aes(x=1.1*cos(pi*(1-breaks/100)),y=1.1*sin(pi*(1-breaks/100)),label=paste0(breaks,"%")))+
-    annotate("text",x=0,y=0,label=paste(pos,custom_label),vjust=0,size=6,fontface="bold")+
+    annotate("text",x=0,y=0,label=paste(pos,custom_label),vjust=0,size=2,fontface="bold")+
     coord_fixed()+
     theme_bw()+
     theme(axis.text=element_blank(),
