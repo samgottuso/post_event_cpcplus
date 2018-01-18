@@ -1,0 +1,35 @@
+body{
+background-color:navy;
+}
+p {
+font-family: "Times";
+font-size: 16px;
+color: white
+}
+h1{
+font-weight: bold;
+color: white
+}
+h2{
+font-weight: bold;
+color: white
+}
+h3{
+font-weight: bold;
+color: red
+}
+div{
+column-count: 2
+}
+.column-left{
+float: left;
+width: 66%;
+text-align: left;
+}
+.column-right{
+float:right;
+width:33%;
+}
+}
+
+

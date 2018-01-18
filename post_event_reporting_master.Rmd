@@ -4,7 +4,7 @@ author: "Sam Gottuso"
 date: "December 7, 2017"
 output:
   html_document: 
-    theme: journal
+    css: test_css.css
 ---
 
 ```{r setup, include=FALSE}
@@ -332,7 +332,7 @@ state_shapes<-invisible(readOGR("cb_2016_us_state_500k.shp",layer = "cb_2016_us_
 
 
 ```
-
+<div class= "column-left">
 ##Intro
 
 This is a (mostly) automated post-event report that tells a story with our data, and compares to other recent and similar events so that everything we present to the client is viewed in context. It will also help us benchmark our performances in Program Year 2 as we look to build upon the success that we experienced during the first year of CPC+.
@@ -343,6 +343,9 @@ This section looks at `r last_event$Event_name` which took place on `r as.Date.P
 
 
 There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Negative_VUT),as.numeric(last_event$Neutral_VUT))` respondents to the survey. This first graph shows how they responded to the "Valuable Use of Time" (VUT) and  "I will take Action" (TA) questions on the survey.
+
+
+
 
 ###Attendance and Survey Response Rates
 
@@ -356,7 +359,7 @@ survey_gauge<-gg.gauge(round(as.numeric(last_event$Survey_response_rate)*100,dig
 
 grid.newpage()
 
-grid.draw(arrangeGrob(attendance_gauge,survey_gauge))
+grid.draw(arrangeGrob(attendance_gauge,survey_gauge,ncol = 2))
 
 
 ```
@@ -384,7 +387,7 @@ practice_map<-leaflet(state_shapes)%>%
   setView(-80,37.8,3.25)%>%
   addPolygons(color="#4444444",fillColor = ~pal_fil(COUNT),weight = 2, opacity =1, fillOpacity = .8,highlight=
                 highlightOptions(weight = 5, bringToFront = TRUE),label=paste(state_shapes$STUSPS,state_count[as.character(state_shapes$STUSPS)]))
-mapview(practice_map)
+practice_map
 
 
 
@@ -401,12 +404,16 @@ colnames(table_melted)<-c("Role","Number of Attendees")
 kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 
 ```
+</div>
 
+<div class="column-right">
 ##Same Type Comparison
 
 This event had a `r attendance_word` attendance than the average attendance for this type of event and a `r practices_word` number of practices attend compared to the average. For the survey, it had a `r survey_response_rate_word` rate of response compared to other similar type events.
 
 These graphs compare the last event to all of the other events of the same type.
+
+###Attendance and Attendance Rate vs all Other Events
 
 ```{r, echo=FALSE}
 
@@ -435,6 +442,8 @@ This section gives a more in-depth breakdown between `r last_event$Event_name` a
 
 
 This first plow shows the distribution of attending roles for each event, while the second shows the comparison between positive responses to the survey question "Attending this session was a valuable use of my time".
+
+###Survey and Role Comparison to Last `r last_event$'Event Type' `
 ```{r, echo=FALSE}
 comparison_same_type$Survey_respondents<-(as.numeric(comparison_same_type$Positive_VUT)+as.numeric(comparison_same_type$Neutral_VUT)+as.numeric(comparison_same_type$Negative_VUT))
 comparison_same_type$Positive_percentage<-round(as.numeric(comparison_same_type$Positive_VUT)/(comparison_same_type$Survey_respondents),2)
@@ -463,6 +472,6 @@ multiplot(survey_percents_1,survey_percents_2)
 
 ```
 
-
+</div>
 
 
