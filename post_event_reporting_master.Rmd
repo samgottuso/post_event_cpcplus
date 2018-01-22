@@ -332,7 +332,6 @@ state_shapes<-invisible(readOGR("cb_2016_us_state_500k.shp",layer = "cb_2016_us_
 
 
 ```
-<div class= "column-left">
 ##Intro
 
 This is a (mostly) automated post-event report that tells a story with our data, and compares to other recent and similar events so that everything we present to the client is viewed in context. It will also help us benchmark our performances in Program Year 2 as we look to build upon the success that we experienced during the first year of CPC+.
@@ -359,7 +358,7 @@ survey_gauge<-gg.gauge(round(as.numeric(last_event$Survey_response_rate)*100,dig
 
 grid.newpage()
 
-grid.draw(arrangeGrob(attendance_gauge,survey_gauge,ncol = 2))
+grid.draw(grobTree(rectGrob(gp=gpar(fill="#328CC1")),arrangeGrob(attendance_gauge,survey_gauge,ncol = 2)))
 
 
 ```
@@ -369,7 +368,7 @@ melted_last_event<-melt(last_event,id.vars = "Event_name")
 survey_colors<-c("green","yellow","red","green","yellow","red")
 graphing_melted<-melted_last_event[20:25,]
 graphing_melted$value_numeric<-as.numeric(graphing_melted$value)
-survey_barplot<-ggplot(graphing_melted,aes(variable,value_numeric,fill=variable))+geom_bar(stat = 'identity')+scale_fill_manual(values = survey_colors)
+survey_barplot<-ggplot(graphing_melted,aes(variable,value_numeric,fill=variable))+geom_bar(stat = 'identity')+scale_fill_manual(values = survey_colors)+theme(plot.background = element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))
 survey_barplot
 
 ```
@@ -404,9 +403,8 @@ colnames(table_melted)<-c("Role","Number of Attendees")
 kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 
 ```
-</div>
 
-<div class="column-right">
+
 ##Same Type Comparison
 
 This event had a `r attendance_word` attendance than the average attendance for this type of event and a `r practices_word` number of practices attend compared to the average. For the survey, it had a `r survey_response_rate_word` rate of response compared to other similar type events.
@@ -419,12 +417,12 @@ These graphs compare the last event to all of the other events of the same type.
 
 attendance_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance',]$value)),vjust= 2,hjust =-.1,label="Average Attendance")+xlab('Event')+ylab('Number of Attendees')
 
-attendance_barplot<-attendance_barplot+theme(axis.text.x = element_blank())
+attendance_barplot<-attendance_barplot+theme(axis.text.x = element_blank(),plot.background =element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))
 
 
 attendance_rate_barplot<-ggplot(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat='identity', position = 'dodge')+geom_hline(yintercept = mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),linetype=2)+annotate("text",x = 0, y= mean(as.numeric(melted_last_events_type[melted_last_events_type$variable=='Attendance_rate',]$value)),vjust= 2,hjust =-.1,label="Average Attendance Rate")+xlab('Event')+ylab('Attendance Rate')
 
-attendance_rate_barplot<-attendance_rate_barplot+theme(axis.text.x = element_blank())
+attendance_rate_barplot<-attendance_rate_barplot+theme(axis.text.x = element_blank(),plot.background = element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))
 
 ##Room for another graph or two-- get team feedback
 
@@ -453,16 +451,16 @@ comparison_same_type$Negative_percentage<-round(as.numeric(comparison_same_type$
 melted_comparison<-melt(comparison_same_type,id.vars="Event_name")
 
 
-role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1))+scale_y_continuous(breaks = seq(0,60,5))+xlab('Attendee Role')+ylab('Number attending')
+role_barplot<-ggplot(melted_comparison[11:32,],aes(x=variable,y=as.numeric(value),fill=Event_name))+geom_bar(stat = 'identity',position = 'dodge')+theme(axis.text.x = element_text(angle = 90, hjust = 1),plot.background = element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))+scale_y_continuous(breaks = seq(0,60,5))+xlab('Attendee Role')+ylab('Number attending')
 
 #role_barplot
 
 survey_percents_1<-ggplot(melted_comparison[seq(55,59,2),],aes(x='',y=as.numeric(value),fill=variable,label=as.numeric(value)))+geom_bar(width=1,stat = 'identity')+geom_text()
-survey_percents_1<-survey_percents_1+coord_polar('y', start = 0)+ggtitle(paste('Survey Responses for ',melted_comparison[55,]$Event_name))+theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.title.y=element_blank())
+survey_percents_1<-survey_percents_1+coord_polar('y', start = 0)+ggtitle(paste('Survey Responses for ',melted_comparison[55,]$Event_name))+theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.title.y=element_blank(),plot.background = element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))
 
 
 survey_percents_2<-ggplot(melted_comparison[seq(56,60,2),],aes(x='',y=as.numeric(value),fill=variable,label=as.numeric(value)))+geom_bar(width=1,stat = 'identity')+geom_text()
-survey_percents_2<-survey_percents_2+coord_polar('y', start = 0)+ggtitle(paste('Survey Responses for ',melted_comparison[56,]$Event_name))+theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.title.y=element_blank())
+survey_percents_2<-survey_percents_2+coord_polar('y', start = 0)+ggtitle(paste('Survey Responses for ',melted_comparison[56,]$Event_name))+theme(axis.text.x=element_blank(),axis.title.x = element_blank(),axis.title.y=element_blank(),plot.background = element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))
 
 
 
@@ -472,6 +470,6 @@ multiplot(survey_percents_1,survey_percents_2)
 
 ```
 
-</div>
+
 
 
