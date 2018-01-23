@@ -349,7 +349,6 @@ There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Nega
 ###Attendance and Survey Response Rates
 
 <div class="column-left">
-
 ```{r,echo = FALSE}
 #gauge(round(as.numeric(last_event$Survey_response_rate)*100,digits=1),min = 0,max = 100,label = 'Survey Response Rate',symbol = '%')
 
@@ -367,13 +366,14 @@ grid.draw(grobTree(rectGrob(gp=gpar(fill="#328CC1")),arrangeGrob(attendance_gaug
 
 ```{r, echo= FALSE}
 melted_last_event<-melt(last_event,id.vars = "Event_name")
-survey_colors<-c("green","yellow","red","green","yellow","red")
+survey_colors<-c("darkgreen","darkgoldenrod2","darkred","darkgreen","darkgoldenrod2","darkred")
 graphing_melted<-melted_last_event[20:25,]
 graphing_melted$value_numeric<-as.numeric(graphing_melted$value)
 survey_barplot<-ggplot(graphing_melted,aes(variable,value_numeric,fill=variable))+geom_bar(stat = 'identity')+scale_fill_manual(values = survey_colors)+theme(plot.background = element_rect(fill = "#328CC1"),legend.background = element_rect(fill = "#328CC1"))
 survey_barplot
 
 ```
+
 
 This map shows us a representation of where practices were attending from.
 
@@ -395,6 +395,9 @@ practice_map
 
 
 ```
+
+
+
 
 This table gives a breakdown of Attendees by role.
 ```{r,echo= FALSE,results= 'asis'}
@@ -471,9 +474,11 @@ role_barplot
 multiplot(survey_percents_1,survey_percents_2)
 
 ```
+
+
 </div>
 
-<div class= "column-right">
+<div class= "column-right" >
 ```{r,echo=FALSE}
 state_shapes_table<-as.data.frame(state_shapes[state_shapes$COUNT!=0,]$COUNT)
 colnames(state_shapes_table)<-"State Count"
@@ -482,7 +487,8 @@ kable(state_shapes_table,caption="Attendance by State")
 
 
 
-````
+```
 
 </div>
+
 
