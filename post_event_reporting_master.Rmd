@@ -348,6 +348,8 @@ There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Nega
 
 ###Attendance and Survey Response Rates
 
+<div class="column-left">
+
 ```{r,echo = FALSE}
 #gauge(round(as.numeric(last_event$Survey_response_rate)*100,digits=1),min = 0,max = 100,label = 'Survey Response Rate',symbol = '%')
 
@@ -469,7 +471,18 @@ role_barplot
 multiplot(survey_percents_1,survey_percents_2)
 
 ```
+</div>
+
+<div class= "column-right">
+```{r,echo=FALSE}
+state_shapes_table<-as.data.frame(state_shapes[state_shapes$COUNT!=0,]$COUNT)
+colnames(state_shapes_table)<-"State Count"
+kable(state_shapes_table,caption="Attendance by State")
 
 
 
+
+````
+
+</div>
 
