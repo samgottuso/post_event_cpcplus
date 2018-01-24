@@ -338,11 +338,10 @@ This is a (mostly) automated post-event report that tells a story with our data,
 
 ## Last Event
 
-This section looks at `r last_event$Event_name` which took place on `r as.Date.POSIXct(as.numeric(last_event$Date))`. It had `r last_event$Attendance` attendees with `r round(as.numeric(last_event$Attendance_rate)*100,digits=1) `% of registrants attending. 
+This section looks at `r last_event$Event_name` which took place on `r as.Date.POSIXct(as.numeric(last_event$Date))`. It had <strong>`r last_event$Attendance` attendees </strong>  with `r round(as.numeric(last_event$Attendance_rate)*100,digits=1) `% of registrants attending. 
 
 
-There were `r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Negative_VUT),as.numeric(last_event$Neutral_VUT))` respondents to the survey. This first graph shows how they responded to the "Valuable Use of Time" (VUT) and  "I will take Action" (TA) questions on the survey.
-
+There were <strong>`r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Negative_VUT),as.numeric(last_event$Neutral_VUT))` respondents </strong> to the survey. This first graph shows the attendance and survey response rates.
 
 
 
@@ -364,6 +363,8 @@ grid.draw(grobTree(rectGrob(gp=gpar(fill="#328CC1")),arrangeGrob(attendance_gaug
 
 ```
 
+###Survey Responses
+This graph shows the survey responses to the Valuable use of time (VUT) and I Will Take Action (TA) questions on the survey.
 ```{r, echo= FALSE}
 melted_last_event<-melt(last_event,id.vars = "Event_name")
 survey_colors<-c("darkgreen","darkgoldenrod2","darkred","darkgreen","darkgoldenrod2","darkred")
@@ -375,8 +376,7 @@ survey_barplot
 ```
 
 
-This map shows us a representation of where practices were attending from.
-
+###State Representation of Attending Practices
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 event_map_data<-map_cleaner("adobe",PIA_9_first_import)
 state_count<-table(event_map_data$state)
@@ -480,9 +480,24 @@ multiplot(survey_percents_1,survey_percents_2)
 
 <div class= "column-right" >
 ```{r,echo=FALSE}
+regions_table<-as.data.frame(matrix(nrow = 19, ncol = 1))
+colnames(regions_table)<-c("Region")
+regions_table$Region<-c("AR","CO","HI","KS","MO","LA","MI","MT","NE","NJ","NY","ND","OH","KY","OK","OR","PA","RI","TN")
+regions_table$Region<-as.character(regions_table$Region)
 state_shapes_table<-as.data.frame(state_shapes[state_shapes$COUNT!=0,]$COUNT)
-colnames(state_shapes_table)<-"State Count"
-kable(state_shapes_table,caption="Attendance by State")
+state_shapes_table$Region<-rownames(state_shapes_table)
+colnames(state_shapes_table)<-c("State Count","Region")
+
+state_shapes_table<-left_join(regions_table,state_shapes_table)
+state_shapes_table$`State Count`<-ifelse(is.na(state_shapes_table$`State Count`),0,state_shapes_table$`State Count`)
+
+final_regions_list<-c("AR","CO","HI","MO","LA","MI","MT","NE","NJ","NY","ND","OH","OK","OR","PA","RI","TN")
+#Combining KS and MO
+state_shapes_table[5,2]=state_shapes_table[5,2]+state_shapes_table[4,2]
+#Combining KY and OH
+state_shapes_table[13,2]=state_shapes_table[13,2]+state_shapes_table[14,2]
+state_shapes_table<-subset(state_shapes_table, Region %in% final_regions_list)
+kable(state_shapes_table,caption="Attendance by Region")
 
 
 
