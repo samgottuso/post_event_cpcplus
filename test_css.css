@@ -1,5 +1,5 @@
 body{
-background-color:#0B3C5D;
+background-color:#C5C1C0;
 }
 p {
 font-family: "Times";
@@ -8,15 +8,15 @@ color: white
 }
 h1{
 font-weight: bold;
-color: white
+color: #0A1612
 }
 h2{
 font-weight: bold;
-color: white
+color: #0A1612
 }
 h3{
 font-weight: bold;
-color: #D9B310
+color: ##F7CE3E
 }
 
 table{
@@ -24,19 +24,19 @@ table{
   color: white !important
 }
 
-div{
-column-count: 2
+.intro{
+background-color: #1A2930;
+color: white;
 }
-.column-left{
+.gauge{
+background-color: #F7CE3E !important;
+}
+.checkbox{
+color:white;
+}
+.state_map{
 float: left;
-width: 66%;
-text-align: left;
 }
-.column-right{
-float:right;
-width:33%;
-padding: 950px 0PX 0PX 100PX;
+.attendees{
+background-color: #F7CE3E
 }
-
-
-
