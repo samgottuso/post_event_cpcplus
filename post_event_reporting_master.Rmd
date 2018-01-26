@@ -2,6 +2,7 @@
 title: "Post_Event_Report"
 author: "Sam Gottuso"
 date: "December 7, 2017"
+runtime: shiny
 output:
   html_document: 
     css: test_css.css
@@ -22,6 +23,7 @@ library(rgdal)
 library(grid)
 library(gridExtra)
 library(mapview)
+library(shiny)
 
 
 
@@ -37,6 +39,8 @@ library(mapview)
 #4) if desired change the output in the header to be pdf_document
 
 #5) Save as new file and run (knit)
+
+
 
 
 ##Load in functions necessary for creating DFs
@@ -147,7 +151,13 @@ PIA_9_survey_first_import<-read_excel(path = 'PIA9_Timely_Exchange_survey.xlsx',
 FR_OH_first_import<-read_excel(path='FR_OH_analysis.xlsx',sheet = 1)
 FR_OH_survey_first_import<-read_excel(path = 'FR_OH_Survey.xlsx',sheet = 1)
 
+#CDOS_AC
+CDOS_AC_first_import<-read_excel(path='CDOS_AC_analysis.xlsx',sheet = 1)
+CDOS_AC_survey_first_import<-read_excel(path = 'CDOS_AC_Survey.xlsx',sheet = 1)
 
+#CDOS_CM
+CDOS_CM_first_import<-read_excel(path='CDOS_CM_analysis.xlsx',sheet = 1)
+CDOS_CM_survey_first_import<-read_excel(path = 'CDOS_CM_Survey.xlsx',sheet = 1)
 
 ##Automatically clean and spit out necessary data 
 
@@ -246,7 +256,9 @@ event_meta_data<-Event_data_cleaner("adobe","PIA 7: Using Data to Steer High Vol
 event_meta_data<-Event_data_cleaner("adobe","PIA 8: Agreeing how to Share the Care with Specialists","PIA",PIA_8_first_import,PIA_8_survey_first_import)
 event_meta_data<-Event_data_cleaner("webx","Submitting your 2017 eCQM Data to CMS","National Webinar",submitting_eCQM_first_import,submitting_eCQM_survey_first_import)
 event_meta_data<-Event_data_cleaner("adobe","PIA 9: Timely Exchange of Hospital and ED Data","PIA",PIA_9_first_import,PIA_9_survey_first_import)
-# event_meta_data<-Event_data_cleaner('webx',"Financial Reporting Office Hour","National Webinar",FR_OH_first_import,FR_OH_survey_first_import)
+event_meta_data<-Event_data_cleaner('webx',"Financial Reporting Office Hour","National Webinar",FR_OH_first_import,FR_OH_survey_first_import)
+event_meta_data<-Event_data_cleaner('webx',"Care Delivery Orientation: Access and Continuity","Care Delivery Orientation Series",CDOS_AC_first_import,CDOS_AC_survey_first_import)
+event_meta_data<-Event_data_cleaner('webx',"Care Delivery Orientation: Care Management","Care Delivery Orientation Series",CDOS_CM_first_import,CDOS_CM_survey_first_import)
 
 #Seperate these 3 events into seperate dataframes for ease of use.
 
@@ -332,9 +344,11 @@ state_shapes<-invisible(readOGR("cb_2016_us_state_500k.shp",layer = "cb_2016_us_
 
 
 ```
+<div class="intro">
 ##Intro
 
 This is a (mostly) automated post-event report that tells a story with our data, and compares to other recent and similar events so that everything we present to the client is viewed in context. It will also help us benchmark our performances in Program Year 2 as we look to build upon the success that we experienced during the first year of CPC+.
+
 
 ## Last Event
 
@@ -343,11 +357,12 @@ This section looks at `r last_event$Event_name` which took place on `r as.Date.P
 
 There were <strong>`r sum(as.numeric(last_event$Positive_VUT),as.numeric(last_event$Negative_VUT),as.numeric(last_event$Neutral_VUT))` respondents </strong> to the survey. This first graph shows the attendance and survey response rates.
 
-
+</div>
 
 ###Attendance and Survey Response Rates
 
-<div class="column-left">
+
+<div class="gauge">
 ```{r,echo = FALSE}
 #gauge(round(as.numeric(last_event$Survey_response_rate)*100,digits=1),min = 0,max = 100,label = 'Survey Response Rate',symbol = '%')
 
@@ -362,6 +377,7 @@ grid.draw(grobTree(rectGrob(gp=gpar(fill="#328CC1")),arrangeGrob(attendance_gaug
 
 
 ```
+</div>
 
 ###Survey Responses
 This graph shows the survey responses to the Valuable use of time (VUT) and I Will Take Action (TA) questions on the survey.
@@ -375,10 +391,11 @@ survey_barplot
 
 ```
 
+<div class= "state_map">
 
 ###State Representation of Attending Practices
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
-event_map_data<-map_cleaner("adobe",PIA_9_first_import)
+event_map_data<-map_cleaner("webx",CDOS_CM_first_import)
 state_count<-table(event_map_data$state)
 state_shapes$COUNT<-state_count[as.character(state_shapes$STUSPS)]
 state_shapes$COUNT<-ifelse(is.na(state_shapes$COUNT),0,state_shapes$COUNT)
@@ -399,6 +416,37 @@ practice_map
 
 
 
+```{r,echo=FALSE,message=FALSE}
+regions_table<-as.data.frame(matrix(nrow = 19, ncol = 1))
+colnames(regions_table)<-c("Region")
+regions_table$Region<-c("AR","CO","HI","KS","MO","LA","MI","MT","NE","NJ","NY","ND","OH","KY","OK","OR","PA","RI","TN")
+regions_table$Region<-as.character(regions_table$Region)
+state_shapes_table<-as.data.frame(state_shapes[state_shapes$COUNT!=0,]$COUNT)
+state_shapes_table$Region<-rownames(state_shapes_table)
+colnames(state_shapes_table)<-c("State Count","Region")
+
+state_shapes_table<-left_join(regions_table,state_shapes_table)
+state_shapes_table$`State Count`<-ifelse(is.na(state_shapes_table$`State Count`),0,state_shapes_table$`State Count`)
+
+final_regions_list<-c("AR","CO","HI","MO","LA","MI","MT","NE","NJ","NY","ND","OH","OK","OR","PA","RI","TN")
+#Combining KS and MO
+state_shapes_table[5,2]=state_shapes_table[5,2]+state_shapes_table[4,2]
+#Combining KY and OH
+state_shapes_table[13,2]=state_shapes_table[13,2]+state_shapes_table[14,2]
+state_shapes_table<-subset(state_shapes_table, Region %in% final_regions_list)
+kable(state_shapes_table,caption="Attendance by Region")
+
+
+
+
+```
+
+</div>
+
+
+
+<div class='attendees'>
+
 This table gives a breakdown of Attendees by role.
 ```{r,echo= FALSE,results= 'asis'}
 table_melted<-melted_last_event[6:16,2:3]
@@ -409,6 +457,20 @@ kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 
 ```
 
+</div>
+
+###2018 Starters Representation
+```{r, echo=FALSE}
+checkboxInput('roundtwo_analysis',"Include 2018 Starters Breakdown?",value = FALSE)
+reactive(
+if(input$roundtwo_analysis==TRUE){
+  print("This is working")
+}else{
+  print("2018 analysis was not selected")
+}
+)
+
+```
 
 ##Same Type Comparison
 
@@ -476,34 +538,6 @@ multiplot(survey_percents_1,survey_percents_2)
 ```
 
 
-</div>
 
-<div class= "column-right" >
-```{r,echo=FALSE}
-regions_table<-as.data.frame(matrix(nrow = 19, ncol = 1))
-colnames(regions_table)<-c("Region")
-regions_table$Region<-c("AR","CO","HI","KS","MO","LA","MI","MT","NE","NJ","NY","ND","OH","KY","OK","OR","PA","RI","TN")
-regions_table$Region<-as.character(regions_table$Region)
-state_shapes_table<-as.data.frame(state_shapes[state_shapes$COUNT!=0,]$COUNT)
-state_shapes_table$Region<-rownames(state_shapes_table)
-colnames(state_shapes_table)<-c("State Count","Region")
-
-state_shapes_table<-left_join(regions_table,state_shapes_table)
-state_shapes_table$`State Count`<-ifelse(is.na(state_shapes_table$`State Count`),0,state_shapes_table$`State Count`)
-
-final_regions_list<-c("AR","CO","HI","MO","LA","MI","MT","NE","NJ","NY","ND","OH","OK","OR","PA","RI","TN")
-#Combining KS and MO
-state_shapes_table[5,2]=state_shapes_table[5,2]+state_shapes_table[4,2]
-#Combining KY and OH
-state_shapes_table[13,2]=state_shapes_table[13,2]+state_shapes_table[14,2]
-state_shapes_table<-subset(state_shapes_table, Region %in% final_regions_list)
-kable(state_shapes_table,caption="Attendance by Region")
-
-
-
-
-```
-
-</div>
 
 
