@@ -35,8 +35,20 @@ background-color: #F7CE3E !important;
 color:white;
 }
 .state_map{
-float: left;
+display: inline-block;
 }
+
+div.center{
+float: left;
+height: 100px;
+}
+div.sidebar{
+float:left;
+margin-right: -100px;
+width: 100px;
+}
+
 .attendees{
-background-color: #F7CE3E
+padding-top: 100px;
+background-color: #F7CE3E;
 }

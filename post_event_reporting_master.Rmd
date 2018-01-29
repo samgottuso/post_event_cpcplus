@@ -392,7 +392,7 @@ survey_barplot
 ```
 
 <div class= "state_map">
-
+  <div class="center">
 ###State Representation of Attending Practices
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 event_map_data<-map_cleaner("webx",CDOS_CM_first_import)
@@ -412,7 +412,9 @@ practice_map
 
 
 ```
-
+  </div>
+  
+  <div class= "sidebar">
 
 
 
@@ -441,11 +443,14 @@ kable(state_shapes_table,caption="Attendance by Region")
 
 ```
 
+ </div>
 </div>
 
 
 
 <div class='attendees'>
+
+###Role Representation of Attendees
 
 This table gives a breakdown of Attendees by role.
 ```{r,echo= FALSE,results= 'asis'}
@@ -459,6 +464,8 @@ kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 
 </div>
 
+<div class="2018_starters">
+
 ###2018 Starters Representation
 ```{r, echo=FALSE}
 checkboxInput('roundtwo_analysis',"Include 2018 Starters Breakdown?",value = FALSE)
@@ -471,7 +478,9 @@ if(input$roundtwo_analysis==TRUE){
 )
 
 ```
+</div>
 
+<div class= "Same__type">
 ##Same Type Comparison
 
 This event had a `r attendance_word` attendance than the average attendance for this type of event and a `r practices_word` number of practices attend compared to the average. For the survey, it had a `r survey_response_rate_word` rate of response compared to other similar type events.
@@ -499,7 +508,9 @@ multiplot(attendance_barplot,attendance_rate_barplot)
 
 ```
 
+</div>
 
+<div class="previous_event">
 
 ##Previous Event Comparision
 
@@ -537,7 +548,7 @@ multiplot(survey_percents_1,survey_percents_2)
 
 ```
 
-
+</div>
 
 
 
