@@ -1,6 +1,11 @@
 #Roundtwo_analysis
 
 Roundtwo_analysis<-function(imported_data,type){
+  #initializing
+R2_metadata<-data.frame(R2_PA=0,T1=0,T2=0,GB=0,LA=0,ND=0,NE=0,UP=0,tp=0,PP=0,PUP=0)
+
+  
+  
   column_numbers_adobe_round2<-c(1,2,3,4) #FILLER
   column_numbers_webx_round2<-c(3,10,33,34,37,40,42,43)
   column_names_adobe_round2<-c("blah","blah","blah") #FILLER
@@ -43,8 +48,9 @@ Roundtwo_analysis<-function(imported_data,type){
   
   
   #Round 2 Numbers
-  round2_regions<-c("GB","LA","NE","ND")
-  round2<-attended_df[(attended_df$Region %in% round2_regions),]
+  R1<-c("AR","CO","HI","MO","LA","MI","MT","NE","NJ","NY","ND","OH","OK","OR","PA","RI","TN")
+  R2_D2<-c("GB","LA","NE","ND")
+  round2<-attended_df[(attended_df$Region %in% R2_D2),]
   
   admin_R2<-sum(round2$Role=="Administration",na.rm = TRUE)
   drs_R2<-sum(round2$Role=="Clinicians providing healthcare services within context of model",na.rm = TRUE)
@@ -65,6 +71,44 @@ Roundtwo_analysis<-function(imported_data,type){
   up_R2=length(unique(round2$ID))
   tp_R2=sum(round2$ID!="Not Available",na.rm = TRUE)
   
+  #Round2 Specifics
+  
+  T1_R2<-sum(round2$Track=="T1",na.rm = TRUE)
+  T2_R2<-sum(round2$Track=="T2",na.rm = TRUE)
+  
+  #Round2 Regions
+  
+  GB_R2<-sum(round2$Region=="GB",na.rm = TRUE)
+  LA_R2<-sum(round2$Region=="LA",na.rm = TRUE)
+  ND_R2<-sum(round2$Region=="ND",na.rm = TRUE)
+  NE_R2<-sum(round2$Region=="NE",na.rm = TRUE)
+  
+  
+  #Counting R1 vs R2 Regions
+Round1<-length(attended_df[(attended_df$Region %in% R1),])  
+Round2<-length(attended_df[(attended_df$Region %in% R2_D2),])
+
+percent_practices<-tp_R2/tp
+
+percent_uniquepractices<-up_R2/up
+
+R2_metadata$R2_PA<-PA_R2
+R2_metadata$T1<-T1_R2
+R2_metadata$T2<-T2_R2
+R2_metadata$GB<-GB_R2
+R2_metadata$LA<-LA_R2
+R2_metadata$ND<-ND_R2
+R2_metadata$NE<-NE_R2
+R2_metadata$UP<-up_R2
+R2_metadata$TP<-tp_R2
+R2_metadata$PP<-percent_practices
+R2_metadata$PUP<-percent_uniquepractices
+
+return(R2_metadata)
+
+
+
+
 
 }
 

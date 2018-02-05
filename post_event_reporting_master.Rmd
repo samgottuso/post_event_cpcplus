@@ -469,13 +469,20 @@ kable(table_melted,caption = "Attendance by Role",row.names=FALSE)
 ###2018 Starters Representation
 ```{r, echo=FALSE}
 checkboxInput('roundtwo_analysis',"Include 2018 Starters Breakdown?",value = FALSE)
+
+source('Roundtwo_analysis.R')
+R2_data<-Roundtwo_analysis(CDOS_CM_first_import,'webx')
+
 reactive(
 if(input$roundtwo_analysis==TRUE){
-  print("This is working")
+  print(R2_data)
 }else{
   print("2018 analysis was not selected")
 }
 )
+
+
+
 
 ```
 </div>
