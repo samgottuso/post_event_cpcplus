@@ -25,7 +25,7 @@ gg.gauge <- function(pos,custom_label,breaks=c(0,30,70,100)) {
           axis.ticks=element_blank(),
           panel.grid=element_blank(),
           panel.border=element_blank(),
-          panel.background = element_rect(fill = "#E8E8E8"),
+          panel.background = element_rect(fill = "#F7F5E6"),
           plot.background = element_rect(fill = "#333A56"),
           legend.background = element_rect(fill = "#333A56")) 
 }

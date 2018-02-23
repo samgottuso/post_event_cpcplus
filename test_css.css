@@ -27,12 +27,10 @@ table{
   color: #E8E8E8 !important
 }
 
-.intro{
+.text{
 background-color: #E8E8E8
 }
-.gauge{
-background-color: #E8E8E8 !important;
-}
+
 .checkbox{
 color:white;
 }
@@ -50,7 +48,3 @@ margin-right: -100px;
 width: 100px;
 }
 
-.attendees{
-padding-top: 100px;
-background-color: #E8E8E8;
-}
