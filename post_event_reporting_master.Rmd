@@ -373,7 +373,7 @@ survey_gauge<-gg.gauge(round(as.numeric(last_event$Survey_response_rate)*100,dig
 
 grid.newpage()
 
-grid.draw(grobTree(rectGrob(gp=gpar(fill="#328CC1")),arrangeGrob(attendance_gauge,survey_gauge,ncol = 2)))
+grid.draw(grobTree(rectGrob(gp=gpar(fill="#E8E8E8")),arrangeGrob(attendance_gauge,survey_gauge,ncol = 2)))
 
 
 ```

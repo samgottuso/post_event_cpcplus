@@ -32,7 +32,7 @@ multiplot <- function(..., plotlist=NULL, file, cols=1, layout=NULL) {
   } else {
     # Set up the page
     grid.newpage()
-    grid.draw(grobTree(rectGrob(gp=gpar(fill="#328CC1"))))
+    grid.draw(grobTree(rectGrob(gp=gpar(fill="#E8E8E8"))))
     pushViewport(viewport(layout = grid.layout(nrow(layout), ncol(layout))))
     
     # Make each plot, in the correct location

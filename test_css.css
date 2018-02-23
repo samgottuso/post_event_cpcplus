@@ -1,35 +1,37 @@
+/* Based on color scheme found here--- # 46 https://www.canva.com/learn/website-color-schemes/ */
+
 body{
-background-color:#C5C1C0;
+background-color:#F7F5E6;
 }
 p {
 font-family: "Times";
 font-size: 16px;
-color: white
+color: #333A56
 }
+
 h1{
 font-weight: bold;
-color: #0A1612
+color: #52658F
 }
 h2{
 font-weight: bold;
-color: #0A1612
+color: #52658F
 }
 h3{
 font-weight: bold;
-color: ##F7CE3E
+color: #333A56
 }
 
 table{
-  background-color: #328CC1 !important;
-  color: white !important
+  background-color: #333A56 !important;
+  color: #E8E8E8 !important
 }
 
 .intro{
-background-color: #1A2930;
-color: white;
+background-color: #E8E8E8
 }
 .gauge{
-background-color: #F7CE3E !important;
+background-color: #E8E8E8 !important;
 }
 .checkbox{
 color:white;
@@ -50,5 +52,5 @@ width: 100px;
 
 .attendees{
 padding-top: 100px;
-background-color: #F7CE3E;
+background-color: #E8E8E8;
 }
